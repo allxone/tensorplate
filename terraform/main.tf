@@ -55,37 +55,118 @@ provider "kubernetes" {
   cluster_ca_certificate = "${base64decode(google_container_cluster.primary.master_auth.0.cluster_ca_certificate)}"
 }
 
-resource "kubernetes_pod" "nginx" {
+resource "kubernetes_pod" "mosquitto" {
   metadata {
-    name = "nginx-example"
+    name = "mosquitto"
     labels {
-      App = "nginx"
+      App = "mosquitto"
     }
   }
 
   spec {
     container {
-      image = "nginx:1.7.8"
-      name  = "example"
-
+      image = "toke/mosquitto"
+      name  = "mosquitto"
       port {
-        container_port = 80
+        container_port = 1883
       }
+      port {
+        container_port = 9001
+      }
+
     }
   }
 }
 
-resource "kubernetes_service" "nginx" {
+resource "kubernetes_service" "mosquitto" {
   metadata {
-    name = "nginx-example"
+    name = "mosquitto-service"
   }
   spec {
     selector {
-      App = "${kubernetes_pod.nginx.metadata.0.labels.App}"
+      App = "${kubernetes_pod.mosquitto.metadata.0.labels.App}"
     }
     port {
-      port = 80
-      target_port = 80
+      port = 1883
+      target_port = 1883
+    }
+
+    type = "LoadBalancer"
+  }
+}
+
+resource "kubernetes_service" "mosquittows" {
+  metadata {
+    name = "mosquittows-service"
+  }
+  spec {
+    selector {
+      App = "${kubernetes_pod.mosquitto.metadata.0.labels.App}"
+    }
+    port {
+      port = 9001
+      target_port = 9001
+    }
+
+    type = "LoadBalancer"
+  }
+}
+
+resource "kubernetes_pod" "floydhub" {
+  metadata {
+    name = "floydhub"
+    labels {
+      App = "floydhub"
+    }
+  }
+
+  spec {
+    container {
+      image = "floydhub/dl-docker:cpu"
+      name  = "floydhub"
+      command = ["jupyter"]
+      args = ["notebook"]
+
+      port {
+        container_port = 6006
+      }
+
+      port {
+        container_port = 8888
+      }
+
+    }
+  }
+}
+
+resource "kubernetes_service" "floydhubtb" {
+  metadata {
+    name = "floydhubtb-service"
+  }
+  spec {
+    selector {
+      App = "${kubernetes_pod.floydhub.metadata.0.labels.App}"
+    }
+    port {
+      port = 6006
+      target_port = 6006
+    }
+
+    type = "LoadBalancer"
+  }
+}
+
+resource "kubernetes_service" "floydhubj" {
+  metadata {
+    name = "floydhuj-service"
+  }
+  spec {
+    selector {
+      App = "${kubernetes_pod.floydhub.metadata.0.labels.App}"
+    }
+    port {
+      port = 8888
+      target_port = 8888
     }
 
     type = "LoadBalancer"
@@ -93,7 +174,7 @@ resource "kubernetes_service" "nginx" {
 }
 
 output "lb_ip" {
-  value = "${kubernetes_service.nginx.load_balancer_ingress.0.ip}"
+  value = "${kubernetes_service.mosquitto.load_balancer_ingress.0.ip}"
 }
 
 # The following outputs allow authentication and connectivity to the GKE Cluster.
