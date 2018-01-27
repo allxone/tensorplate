@@ -1,3 +1,5 @@
 .vscode
 .terraform
 security/
+ssd_mobilenet_v1_coco_2017_11_17/*
+ssd_mobilenet_v1_coco_2017_11_17*
