@@ -9,3 +9,5 @@ Tensorplate ...
 
 ## Credits
 [Tensorflow Object Detection Model](https://github.com/tensorflow/models/tree/master/research/object_detection)
+
+[Ingesting Camera Images and Video from Raspberry Pi + Pi Camera Through MQTT and FTP](https://github.com/tspannhw/rpi-picamera-mqtt-nifi)
