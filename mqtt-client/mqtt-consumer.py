@@ -14,17 +14,21 @@ def on_connect( client, userdata, flags, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    print(msg.topic+" "+str(msg.payload))
+    #print(msg.topic+" "+str(msg.payload))
     process_message(str(msg.payload))
 
 def process_message(message):
-    payload = json.loads(message)
+    
+    try:
+        payload = json.loads(message)
 
-    if tracked_object in payload.keys():
-        qta = payload[tracked_object]
-        print_sense(qta >= threshold, qta)
-    else:
-        print_sense(False, 0)
+        if tracked_object in payload.keys():
+            qta = payload[tracked_object]
+            print_sense(qta >= threshold, qta)
+        else:
+            print_sense(False, 0)
+    except:
+        pass
 
 def print_sense(result, qta):
     v = [36, 204, 30]
