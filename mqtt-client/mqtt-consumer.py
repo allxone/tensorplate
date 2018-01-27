@@ -28,6 +28,7 @@ def process_message(message):
         else:
             print_sense(False, 0)
     except:
+        print('exception')
         pass
 
 def print_sense(result, qta):
