@@ -2,7 +2,7 @@ import paho.mqtt.client as mqtt
 from sense_hat import SenseHat 
 import json
 
-tracked_object = 'person'
+tracked_object = 'car'
 threshold = 3
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -23,7 +23,7 @@ def process_message(message):
     if tracked_object in payload.keys():
         qta = payload[tracked_object]
         print_sense(qta >= threshold, qta)
-    else
+    else:
         print_sense(False, 0)
 
 def print_sense(result, qta):
