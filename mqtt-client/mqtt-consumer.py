@@ -35,8 +35,9 @@ def print_sense(result, qta):
     v = [36, 204, 30]
     r = [230, 5, 5]
     b = [255, 255, 255]
+    k = [0, 0 , 0]
 
-    foreground = b
+    foreground = k
     if (result):
         background = v
     else:
@@ -55,4 +56,5 @@ client.connect("130.211.134.220", 1883, 60)
 # Other loop*() functions are available that give a threaded interface and a
 # manual interface.
 sense = SenseHat()
+#sense.set_rotation(270)
 client.loop_forever()
