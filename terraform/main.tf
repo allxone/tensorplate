@@ -112,66 +112,68 @@ resource "kubernetes_service" "mosquittows" {
   }
 }
 
-resource "kubernetes_pod" "floydhub" {
-  metadata {
-    name = "floydhub"
-    labels {
-      App = "floydhub"
+/*
+  resource "kubernetes_pod" "floydhub" {
+    metadata {
+      name = "floydhub"
+      labels {
+        App = "floydhub"
+      }
+    }
+
+    spec {
+      container {
+        image = "floydhub/dl-docker:cpu"
+        name  = "floydhub"
+        command = ["jupyter"]
+        args = ["notebook"]
+
+        port {
+          container_port = 6006
+        }
+
+        port {
+          container_port = 8888
+        }
+
+      }
     }
   }
 
-  spec {
-    container {
-      image = "floydhub/dl-docker:cpu"
-      name  = "floydhub"
-      command = ["jupyter"]
-      args = ["notebook"]
-
+  resource "kubernetes_service" "floydhubtb" {
+    metadata {
+      name = "floydhubtb-service"
+    }
+    spec {
+      selector {
+        App = "${kubernetes_pod.floydhub.metadata.0.labels.App}"
+      }
       port {
-        container_port = 6006
+        port = 6006
+        target_port = 6006
       }
 
+      type = "LoadBalancer"
+    }
+  }
+
+  resource "kubernetes_service" "floydhubj" {
+    metadata {
+      name = "floydhuj-service"
+    }
+    spec {
+      selector {
+        App = "${kubernetes_pod.floydhub.metadata.0.labels.App}"
+      }
       port {
-        container_port = 8888
+        port = 8888
+        target_port = 8888
       }
 
+      type = "LoadBalancer"
     }
   }
-}
-
-resource "kubernetes_service" "floydhubtb" {
-  metadata {
-    name = "floydhubtb-service"
-  }
-  spec {
-    selector {
-      App = "${kubernetes_pod.floydhub.metadata.0.labels.App}"
-    }
-    port {
-      port = 6006
-      target_port = 6006
-    }
-
-    type = "LoadBalancer"
-  }
-}
-
-resource "kubernetes_service" "floydhubj" {
-  metadata {
-    name = "floydhuj-service"
-  }
-  spec {
-    selector {
-      App = "${kubernetes_pod.floydhub.metadata.0.labels.App}"
-    }
-    port {
-      port = 8888
-      target_port = 8888
-    }
-
-    type = "LoadBalancer"
-  }
-}
+*/
 
 output "lb_ip" {
   value = "${kubernetes_service.mosquitto.load_balancer_ingress.0.ip}"
