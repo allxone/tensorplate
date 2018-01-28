@@ -28,7 +28,7 @@ HOST = "0.0.0.0"
 if os.environ.get('FLASK_PORT') is not None:
     PORT = os.environ['FLASK_PORT']
 else:
-	PORT = 8889
+	PORT = 80
 #Define Flask Application
 app = Flask(APP_NAME)
 
@@ -52,6 +52,8 @@ categories = None
 category_index = None
 
 detection_graph = None
+
+
 '''
 Setup method
 '''
@@ -79,6 +81,9 @@ def setupApplication(app):
 	category_index = label_map_util.create_category_index(categories)
 
 	return label_map, categories, category_index, detection_graph
+
+
+label_map, categories, category_index, detection_graph = setupApplication(app)
 
 def load_image_into_numpy_array(image):
 	(im_width, im_height) = image.size
