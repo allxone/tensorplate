@@ -10,5 +10,6 @@ COPY ./mqtt.py /mqtt.py
 
 COPY ./flask-server /app
 
-RUN python /mqtt.py
+#RUN python /mqtt.py
+CMD [ "python", "/mqtt.py" ]
 
