@@ -1,0 +1,3 @@
+TODO list
+- mttq.py RUN directive is blocking Docker build. Must be executed in background
+- Flask server protobuf files need to be manually compiled. This step should be integrated in Dockerfile 
