@@ -28,7 +28,7 @@ HOST = "0.0.0.0"
 if os.environ.get('FLASK_PORT') is not None:
     PORT = os.environ['FLASK_PORT']
 else:
-	PORT = 80
+	PORT = 8888
 #Define Flask Application
 app = Flask(APP_NAME)
 

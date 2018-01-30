@@ -1,3 +1,22 @@
+variable "initial_node_count" {
+    description = "GCP machine type"
+    default = "3"
+}
+
+variable "kubernetes_password" {
+    description = "GCP machine type"
+}
+
+variable "flask_port" {
+    description = "GCP machine type"
+    default = "8888"
+}
+
+variable "mqtt_port" {
+    description = "GCP machine type"
+    default = "1883"
+}
+
 terraform {
   backend "s3" {
     bucket  = "s3-terraform-state.stedel.it"
@@ -17,7 +36,7 @@ provider "google" {
 resource "google_container_cluster" "primary" {
   name               = "converge-hackaton"
   zone               = "us-central1-a"
-  initial_node_count = 1
+  initial_node_count = "${var.initial_node_count}"
 
   additional_zones = [
     "us-central1-b",
@@ -26,7 +45,7 @@ resource "google_container_cluster" "primary" {
 
   master_auth {
     username = "hackathon"
-    password = "convergehackathon.org"
+    password = "${var.kubernetes_password}"
   }
 
   node_config {
@@ -68,12 +87,11 @@ resource "kubernetes_pod" "mosquitto" {
       image = "toke/mosquitto"
       name  = "mosquitto"
       port {
-        container_port = 1883
+        container_port = "${var.mqtt_port}"
       }
-      port {
-        container_port = 9001
-      }
-
+      # port {
+      #   container_port = 9001
+      # }
     }
   }
 }
@@ -87,25 +105,8 @@ resource "kubernetes_service" "mosquitto" {
       App = "${kubernetes_pod.mosquitto.metadata.0.labels.App}"
     }
     port {
-      port = 1883
-      target_port = 1883
-    }
-
-    type = "LoadBalancer"
-  }
-}
-
-resource "kubernetes_service" "mosquittows" {
-  metadata {
-    name = "mosquittows-service"
-  }
-  spec {
-    selector {
-      App = "${kubernetes_pod.mosquitto.metadata.0.labels.App}"
-    }
-    port {
-      port = 9001
-      target_port = 9001
+      port = "${var.mqtt_port}"
+      target_port = "${var.mqtt_port}"
     }
 
     type = "LoadBalancer"
@@ -122,13 +123,23 @@ resource "kubernetes_pod" "scoring" {
 
   spec {
     container {
-      image = ""
+      image = "allxone/tensorplate:latest"
       name  = "scoring"
-      command = ["???"]
-      args = ["???"]
 
+      env {
+        name = "FLASK_PORT"
+        value = "${var.flask_port}"
+      }
+      env {
+        name = "MQTT_SERVER"
+        value = "${kubernetes_service.mosquitto.load_balancer_ingress.0.ip}"
+      }
+      env {
+        name = "MQTT_SERVER_PORT"
+        value = "${var.mqtt_port}"
+      }
       port {
-        container_port = 8888
+        container_port = "${var.flask_port}"
       }
     }
   }
@@ -143,8 +154,8 @@ resource "kubernetes_service" "scoring" {
       App = "${kubernetes_pod.scoring.metadata.0.labels.App}"
     }
     port {
-      port = 8888
-      target_port = 8888
+      port = "${var.flask_port}"
+      target_port = "${var.flask_port}"
     }
 
     type = "LoadBalancer"
