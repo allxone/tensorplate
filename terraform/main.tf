@@ -125,6 +125,7 @@ resource "kubernetes_pod" "scoring" {
     container {
       image = "allxone/tensorplate:Cleanup"
       name  = "scoring"
+      image_pull_policy = "Always"
 
       env {
         name = "FLASK_PORT"
