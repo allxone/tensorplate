@@ -11,9 +11,9 @@ else:
 	mqtt_broker_address = "127.0.0.1"
 
 if os.environ.get('MQTT_SERVER_PORT') is not None:
-    mqtt_broker_port = os.environ['MQTT_SERVER_PORT']
+    mqtt_broker_port = int(os.environ['MQTT_SERVER_PORT'])
 else:
-	mqtt_broker_port = "1883"
+	mqtt_broker_port = 1883
 
 if os.environ.get('FLASK_PORT') is not None:
     scoring_server_address = "http://localhost:" + os.environ['FLASK_PORT']

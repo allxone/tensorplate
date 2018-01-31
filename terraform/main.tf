@@ -20,7 +20,7 @@ variable "mqtt_port" {
 terraform {
   backend "s3" {
     bucket  = "s3-terraform-state.stedel.it"
-    key     = "converge/hackathon2.tfstate"
+    key     = "converge/hackathon3.tfstate"
     region  = "us-east-1"
     encrypt = true
   }
@@ -40,7 +40,7 @@ resource "google_container_cluster" "primary" {
 
   additional_zones = [
     "us-central1-c",
-    "us-central1-d",
+    "us-central1-f",
   ]
 
   master_auth {
