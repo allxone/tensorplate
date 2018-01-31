@@ -1,26 +1,26 @@
 variable "initial_node_count" {
-    description = "GCP machine type"
-    default = "3"
+    description = "Minions"
+    default = "1"
 }
 
 variable "kubernetes_password" {
-    description = "GCP machine type"
+    description = "Kubernetes password"
 }
 
 variable "flask_port" {
-    description = "GCP machine type"
+    description = "Flask port"
     default = "8888"
 }
 
 variable "mqtt_port" {
-    description = "GCP machine type"
+    description = "MQTT port"
     default = "1883"
 }
 
 terraform {
   backend "s3" {
     bucket  = "s3-terraform-state.stedel.it"
-    key     = "converge/hackathon.tfstate"
+    key     = "converge/hackathon2.tfstate"
     region  = "us-east-1"
     encrypt = true
   }
@@ -39,8 +39,8 @@ resource "google_container_cluster" "primary" {
   initial_node_count = "${var.initial_node_count}"
 
   additional_zones = [
-    "us-central1-b",
     "us-central1-c",
+    "us-central1-d",
   ]
 
   master_auth {
@@ -123,7 +123,7 @@ resource "kubernetes_pod" "scoring" {
 
   spec {
     container {
-      image = "allxone/tensorplate:latest"
+      image = "allxone/tensorplate:Cleanup"
       name  = "scoring"
 
       env {

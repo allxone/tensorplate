@@ -2,6 +2,7 @@ import paho.mqtt.client as mqtt
 import time
 import requests
 import io
+import os
 
 # Network configuration
 if os.environ.get('MQTT_SERVER') is not None:
