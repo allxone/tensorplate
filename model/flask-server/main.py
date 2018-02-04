@@ -25,10 +25,8 @@ from utils import visualization_utils as vis_util
 APP_NAME = "tensortraffic-webserver"
 #0.0.0.0 to open port to external
 HOST = "0.0.0.0"
-if os.environ.get('FLASK_PORT') is not None:
-    PORT = os.environ['FLASK_PORT']
-else:
-	PORT = 8888
+PORT = 80
+
 #Define Flask Application
 app = Flask(APP_NAME)
 

@@ -18,7 +18,7 @@ else:
 if os.environ.get('SCORING_ADDRESS') is not None:
     scoring_server_address = os.environ['SCORING_ADDRESS']
 else:
-	scoring_server_address = "http://127.0.0.1:8888"
+	scoring_server_address = "http://127.0.0.1:80"
 
 # Instantiate Mosquitto client
 client = mqtt.Client("P1")

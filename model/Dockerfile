@@ -5,7 +5,5 @@ COPY ./requirements.txt /requirements.txt
 COPY ./flask-server /app
 RUN apt-get update && apt-get install -y protobuf-compiler python-pil python-lxml
 RUN pip install -r /requirements.txt
-RUN git clone https://github.com/tensorflow/models
-RUN cd models/research && protoc object_detection/protos/*.proto --python_out=.
-
-ENV FLASK_PORT 8888
+RUN cd / && git clone https://github.com/tensorflow/models
+RUN cd /models/research && protoc object_detection/protos/*.proto --python_out=.
