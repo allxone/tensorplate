@@ -8,6 +8,6 @@ COPY ./mqtt.py /mqtt.py
 
 ENV SCORING_ADDRESS http://localhost:80
 ENV MQTT_SERVER 127.0.0.1
-ENV MQTT_SERVER_PORT 188
+ENV MQTT_SERVER_PORT 1883
 
 CMD [ "python", "/mqtt.py" ]
