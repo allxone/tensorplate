@@ -4,7 +4,7 @@ import json
 #Models import
 
 # This is needed since the notebook is stored in the object_detection folder.
-sys.path.append("../models")
+sys.path.append("../models/research")
 
 import numpy as np
 import six.moves.urllib as urllib
