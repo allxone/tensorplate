@@ -3,5 +3,3 @@ six
 tensorflow==1.4.1
 matplotlib
 Pillow
-requests
-paho-mqtt

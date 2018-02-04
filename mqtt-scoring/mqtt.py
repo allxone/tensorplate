@@ -15,10 +15,10 @@ if os.environ.get('MQTT_SERVER_PORT') is not None:
 else:
 	mqtt_broker_port = 1883
 
-if os.environ.get('FLASK_PORT') is not None:
-    scoring_server_address = "http://localhost:" + os.environ['FLASK_PORT']
+if os.environ.get('SCORING_ADDRESS') is not None:
+    scoring_server_address = os.environ['SCORING_ADDRESS']
 else:
-    scoring_server_address = "http://localhost:8888"
+	scoring_server_address = "http://127.0.0.1:8888"
 
 # Instantiate Mosquitto client
 client = mqtt.Client("P1")
