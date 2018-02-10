@@ -3,6 +3,7 @@ import time
 import requests
 import io
 import os
+import sys
 
 # Network configuration
 if os.environ.get('MQTT_SERVER') is not None:
@@ -31,18 +32,21 @@ def on_log(client, userdata, level, buf):
 
 
 def on_message(client, userdata, message):
-    print("message topic=", message.topic)
-    print("message qos=", message.qos)
-    print("message retain flag=", message.retain)
-    f = open('./test.jpg', 'wb')
-    f.write(message.payload)
-    f.close()
-    foto = {'image': open('./test.jpg', 'rb')}
-    response = requests.post(scoring_server_address + '/scoreImage', files=foto)
-    print(response.status_code, response.reason)
-    client.publish("tensorplate/samantha/out", str(response.json()))
-    print(response.json())
-
+    try:
+        print("message topic=", message.topic)
+        print("message qos=", message.qos)
+        print("message retain flag=", message.retain)
+        f = open('./test.jpg', 'wb')
+        f.write(message.payload)
+        f.close()
+        foto = {'image': open('./test.jpg', 'rb')}
+        response = requests.post(scoring_server_address + '/scoreImage', files=foto)
+        print(response.status_code, response.reason)
+        client.publish("tensorplate/samantha/out", str(response.json()))
+        print(response.json())
+    except:
+        print "Unexpected error:", sys.exc_info()
+        sys.exit()
 
 # Start Mosquitto loop
 client.loop_start()

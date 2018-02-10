@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
 import json
+import sys
 
 mqtthost = "104.154.62.50"
 mqttqueue = "tensorplate/samantha/out"
@@ -20,15 +21,9 @@ def on_message(client, userdata, msg):
 
 def process_message(message):
     try:
-        payload = json.loads(message)
-        print(payload)
-        if tracked_object in payload.keys():
-            qta = payload[tracked_object]
-            print("{}: {}".format(tracked_object, qta))
-        else:
-            print("{}: {}".format(tracked_object, "missing"))
+        print(message)
     except:
-        print('exception')
+        print "Unexpected error:", sys.exc_info()
         pass
 
 

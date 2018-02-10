@@ -21,13 +21,12 @@ mqttqueue = "tensorplate/samantha/in"
 #Read images
 try:
  for infile in glob.glob( os.path.join(inpath, "*.jpg") ):  
-  f=open(infile)
-  fileContent = f.read()
-  byteArr = bytearray(fileContent)
-  f.close()
+  with open(infile, mode='rb') as f:
+   fileContent = f.read()
+   byteArr = bytearray(fileContent)
   message = byteArr
   publish.single(mqttqueue, payload=message, hostname=mqtthost)
-  print('Sent ' + infile)
+  print('Sent {} ({} bytes)'.format(infile, len(message)))
   time.sleep(10)
 finally:
  print('Closing up')
