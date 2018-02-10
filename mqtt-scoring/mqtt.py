@@ -21,11 +21,6 @@ if os.environ.get('SCORING_ADDRESS') is not None:
 else:
 	scoring_server_address = "http://127.0.0.1:80"
 
-# Instantiate Mosquitto client
-client = mqtt.Client("P1")
-client.connect(mqtt_broker_address, port=mqtt_broker_port)
-
-
 # Mosquitto callbacks
 def on_log(client, userdata, level, buf):
     print("log: ", buf)
@@ -48,16 +43,18 @@ def on_message(client, userdata, message):
         print "Unexpected error:", sys.exc_info()
         sys.exit()
 
-# Start Mosquitto loop
-client.loop_start()
-client.subscribe("tensorplate/samantha/in")
+def on_disconnect(client, userdata,rc=0):
+    logging.debug("Disconnected result code "+str(rc))
+    client.loop_stop()
+
+# Instantiate Mosquitto client
+client = mqtt.Client("P1")
+
 client.on_message = on_message
 client.on_log = on_log
+client.on_disconnect = on_disconnect
 
-#client.publish("coverage-hackathon", "OFF")
-
-_never_true = False
-while not _never_true:
-    time.sleep(1)
-
-client.loop_stop()
+# Start Mosquitto loop
+client.connect(mqtt_broker_address, port=mqtt_broker_port)
+client.subscribe("tensorplate/samantha/in")
+client.loop_forever()
