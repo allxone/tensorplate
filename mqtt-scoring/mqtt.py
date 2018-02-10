@@ -40,11 +40,10 @@ def on_message(client, userdata, message):
         client.publish("tensorplate/samantha/out", str(response.json()))
         print(response.json())
     except:
-        print "Unexpected error:", sys.exc_info()
+        print("Unexpected error:", sys.exc_info())
         sys.exit()
 
 def on_disconnect(client, userdata,rc=0):
-    logging.debug("Disconnected result code "+str(rc))
     client.loop_stop()
 
 # Instantiate Mosquitto client
