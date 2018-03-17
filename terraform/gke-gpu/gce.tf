@@ -14,9 +14,9 @@ provider "google" {
 resource "google_container_cluster" "primary" {
   name               = "gke-gpu-pool"
   zone               = "${var.cloud_zone}"
-  initial_node_count = "${var.initial_node_count}"
   enable_kubernetes_alpha = true
   node_version = "${var.kubernetes_version}"
+  default_master_version = "${var.default_master_version}"
 
   master_auth {
     username = "gke-gpu"
@@ -26,7 +26,7 @@ resource "google_container_cluster" "primary" {
 // https://github.com/terraform-providers/terraform-provider-google/pull/299
   node_pool {
     name = "alwayson"
-    node_count = 1
+    node_count = "${var.alwayson_node_count}"
 
     node_config {
       machine_type    = "n1-standard-1"
@@ -40,14 +40,15 @@ resource "google_container_cluster" "primary" {
       ]
       labels {
         role = "kubernetes"
+        pool = "alwayson"
       }
       tags = ["role", "kubernetes"]
     }
   }
 
   node_pool {
-    name = "gpus"
-    node_count = 1
+    name = "preemptible"
+    node_count = "${var.preemptible_node_count}"
 
     node_config {
       machine_type    = "n1-standard-1"
@@ -55,14 +56,15 @@ resource "google_container_cluster" "primary" {
       preemptible     = true
 
 
-// Waiting for https://github.com/terraform-providers/terraform-provider-google/issues/1067
-//      guest_accelerator {
-//        type          = "nvidia-tesla-k80"
-//        count         = 1
-//      }
+// Thanks to https://github.com/terraform-providers/terraform-provider-google/issues/1067
+      guest_accelerator {
+        type          = "nvidia-tesla-k80"
+        count         = 1
+      }
 
       labels {
         role = "kubernetes"
+        pool = "preemptible"
       }
       tags = ["role", "kubernetes"]
     }

@@ -1,13 +1,22 @@
 variable "kubernetes_version" {
-  default = "1.9.2"
+  default = "1.9.4.gke.1"
+}
+
+variable "default_master_version" {
+  default = "1.9.4"
 }
 
 variable "cloud_zone" {
   default = "us-central1-a"
 }
 
-variable "initial_node_count" {
-    description = "Minions"
+variable "alwayson_node_count" {
+    description = "Alwayson pool Node count "
+    default = "1"
+}
+
+variable "preemptible_node_count" {
+    description = "Preemptible pool Node count "
     default = "1"
 }
 
