@@ -37,7 +37,7 @@ else:
     tfs_timeout = 60
 
 if os.environ.get('TFS_THRESHOLD') is not None:
-    tfs_threshold = int(os.environ['TFS_THRESHOLD'])
+    tfs_threshold = float(os.environ['TFS_THRESHOLD'])
 else:
     tfs_threshold = 0.5
 
