@@ -1,4 +1,5 @@
 paho-mqtt
 numpy
 tensorflow
-grpc
+tensorflow_serving_api
+Pillow

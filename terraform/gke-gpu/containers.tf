@@ -11,6 +11,7 @@ provider "kubernetes" {
 resource "kubernetes_pod" "mosquitto" {
   metadata {
     name = "mosquitto"
+
     labels {
       App = "mosquitto"
     }
@@ -20,9 +21,11 @@ resource "kubernetes_pod" "mosquitto" {
     container {
       image = "toke/mosquitto"
       name  = "mosquitto"
+
       port {
         container_port = "${var.mqtt_port}"
       }
+
       # port {
       #   container_port = 9001
       # }
@@ -34,12 +37,14 @@ resource "kubernetes_service" "mosquitto" {
   metadata {
     name = "mosquitto-service"
   }
+
   spec {
     selector {
       App = "${kubernetes_pod.mosquitto.metadata.0.labels.App}"
     }
+
     port {
-      port = "${var.mqtt_port}"
+      port        = "${var.mqtt_port}"
       target_port = "${var.mqtt_port}"
     }
 
@@ -50,6 +55,7 @@ resource "kubernetes_service" "mosquitto" {
 resource "kubernetes_pod" "model" {
   metadata {
     name = "model"
+
     labels {
       App = "model"
     }
@@ -57,8 +63,8 @@ resource "kubernetes_pod" "model" {
 
   spec {
     container {
-      image = "allxone/tensorplate:model"
-      name  = "model"
+      image             = "allxone/tensorplate:model-tfserving"
+      name              = "model"
       image_pull_policy = "Always"
 
       port {
@@ -72,51 +78,55 @@ resource "kubernetes_service" "model" {
   metadata {
     name = "model"
   }
+
   spec {
     selector {
       App = "${kubernetes_pod.model.metadata.0.labels.App}"
     }
+
     port {
-      port = "${var.scoring_port}"
+      port        = "${var.scoring_port}"
       target_port = "${var.scoring_port}"
     }
+
     type = "LoadBalancer"
   }
 }
 
-resource "kubernetes_pod" "mqtt-scoring" {
-  metadata {
-    name = "mqtt-scoring"
-    labels {
-      App = "mqtt-scoring"
-    }
-  }
+# resource "kubernetes_pod" "mqtt-tfserving" {
+#   metadata {
+#     name = "mqtt-tfserving"
+#     labels {
+#       App = "mqtt-tfserving"
+#     }
+#   }
 
-  spec {
-    container {
-      image = "allxone/tensorplate:mqtt-scoring"
-      name  = "mqtt-scoring"
-      image_pull_policy = "Always"
+#   spec {
+#     container {
+#       image = "allxone/tensorplate:mqtt-tfserving"
+#       name  = "mqtt-tfserving"
+#       image_pull_policy = "Always"
 
-      env {
-        name = "SCORING_ADDRESS"
-        value = "http://${kubernetes_service.model.load_balancer_ingress.0.ip}:${var.scoring_port}"
-      }
-      env {
-        name = "MQTT_SERVER"
-        value = "${kubernetes_service.mosquitto.load_balancer_ingress.0.ip}"
-      }
-      env {
-        name = "MQTT_SERVER_PORT"
-        value = "${var.mqtt_port}"
-      }
-    }
-  }
-}
+#       env {
+#         name = "SCORING_ADDRESS"
+#         value = "${kubernetes_service.model.load_balancer_ingress.0.ip}:${var.scoring_port}"
+#       }
+#       env {
+#         name = "MQTT_SERVER"
+#         value = "${kubernetes_service.mosquitto.load_balancer_ingress.0.ip}"
+#       }
+#       env {
+#         name = "MQTT_SERVER_PORT"
+#         value = "${var.mqtt_port}"
+#       }
+#     }
+#   }
+# }
 
 output "lb_ip" {
   value = "${kubernetes_service.mosquitto.load_balancer_ingress.0.ip}"
 }
+
 output "scoring_address" {
-  value = "http://${kubernetes_service.model.load_balancer_ingress.0.ip}:${var.scoring_port}"
+  value = "${kubernetes_service.model.load_balancer_ingress.0.ip}:${var.scoring_port}"
 }

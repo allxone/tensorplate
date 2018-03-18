@@ -1,5 +1,5 @@
 import paho.mqtt.client as mqtt
-import tfs_client as tfs
+import utils.tfs_client as tfs
 import time
 import io
 import os
@@ -45,19 +45,14 @@ def on_message(client, userdata, message):
 
         # Call the predict_service via gRPC
         response = tfs_client.predict(message.payload)
-
-        # Process response
-        processed_response = self.build_response(response)
+        print("response=", response)
 
         # Return result
-        mqtt_client.publish("tensorplate/samantha/out", processed_response)
+        mqtt_client.publish("tensorplate/samantha/out", response)
 
     except:
         print("Unexpected error:", sys.exc_info())
         sys.exit()
-
-def build_response(response):
-    return "{cars: 4}"
 
 def on_disconnect(client, userdata,rc=0):
     mqtt_client.loop_stop()
@@ -69,7 +64,7 @@ mqtt_client.on_log = on_log
 mqtt_client.on_disconnect = on_disconnect
 
 # Instantiate Tensorflow Serving client
-tfs_client = tfs.Client(scoring_server_address, scoring_model, 1, True)     # Client(hostport, model, version, check_status)
+tfs_client = tfs.Client(scoring_server_address, scoring_model, 1)     # Client(hostport, model, version, check_status)
 
 # Start Mosquitto loop
 mqtt_client.connect(mqtt_broker_address, port=mqtt_broker_port)

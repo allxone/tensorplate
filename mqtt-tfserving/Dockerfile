@@ -3,7 +3,7 @@ FROM python:3.5
 # Copy over and install the requirements
 COPY ./requirements.txt /requirements.txt
 COPY ./mqtt-tfserving.py /mqtt-tfserving.py
-COPY ./tfs_client.py /tfs_client.py
+COPY ./utils /utils
 
 RUN pip install -r /requirements.txt
 

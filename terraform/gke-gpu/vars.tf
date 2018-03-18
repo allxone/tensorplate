@@ -1,8 +1,8 @@
 variable "kubernetes_version" {
-  default = "1.9.4.gke.1"
+  default = "1.9.4-gke.1"
 }
 
-variable "default_master_version" {
+variable "min_master_version" {
   default = "1.9.4"
 }
 
@@ -11,27 +11,27 @@ variable "cloud_zone" {
 }
 
 variable "alwayson_node_count" {
-    description = "Alwayson pool Node count "
-    default = "1"
+  description = "Alwayson pool Node count "
+  default     = "1"
 }
 
 variable "preemptible_node_count" {
-    description = "Preemptible pool Node count "
-    default = "1"
+  description = "Preemptible pool Node count "
+  default     = "1"
 }
 
 variable "kubernetes_password" {
-    description = "Kubernetes password"
+  description = "Kubernetes password"
 }
 
 variable "scoring_port" {
   description = "Scoring port"
-  default = "80"
+  default     = "9000"
 }
 
 variable "mqtt_port" {
-    description = "MQTT port"
-    default = "1883"
+  description = "MQTT port"
+  default     = "1883"
 }
 
 terraform {

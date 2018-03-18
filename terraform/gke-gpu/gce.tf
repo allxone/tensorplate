@@ -12,65 +12,67 @@ provider "google" {
 // - gke alpha options
 
 resource "google_container_cluster" "primary" {
-  name               = "gke-gpu-pool"
-  zone               = "${var.cloud_zone}"
+  name                    = "gke-gpu-pool"
+  zone                    = "${var.cloud_zone}"
   enable_kubernetes_alpha = true
-  node_version = "${var.kubernetes_version}"
-  default_master_version = "${var.default_master_version}"
+  node_version            = "${var.kubernetes_version}"
+  min_master_version      = "${var.min_master_version}"
 
   master_auth {
     username = "gke-gpu"
     password = "${var.kubernetes_password}"
   }
 
-// https://github.com/terraform-providers/terraform-provider-google/pull/299
+  // https://github.com/terraform-providers/terraform-provider-google/pull/299
   node_pool {
-    name = "alwayson"
+    name       = "alwayson"
     node_count = "${var.alwayson_node_count}"
 
     node_config {
-      machine_type    = "n1-standard-1"
-      disk_size_gb    = 10
-      preemptible     = false
+      machine_type = "n1-standard-1"
+      disk_size_gb = 10
+      preemptible  = false
+
       oauth_scopes = [
-      "https://www.googleapis.com/auth/compute",
-      "https://www.googleapis.com/auth/devstorage.read_only",
-      "https://www.googleapis.com/auth/logging.write",
-      "https://www.googleapis.com/auth/monitoring",
+        "https://www.googleapis.com/auth/compute",
+        "https://www.googleapis.com/auth/devstorage.read_only",
+        "https://www.googleapis.com/auth/logging.write",
+        "https://www.googleapis.com/auth/monitoring",
       ]
+
       labels {
         role = "kubernetes"
         pool = "alwayson"
       }
+
       tags = ["role", "kubernetes"]
     }
   }
 
   node_pool {
-    name = "preemptible"
+    name       = "preemptible"
     node_count = "${var.preemptible_node_count}"
 
     node_config {
-      machine_type    = "n1-standard-1"
-      disk_size_gb    = 10
-      preemptible     = true
+      machine_type = "n1-standard-1"
+      disk_size_gb = 10
+      preemptible  = true
 
-
-// Thanks to https://github.com/terraform-providers/terraform-provider-google/issues/1067
+      // Thanks to https://github.com/terraform-providers/terraform-provider-google/issues/1067
       guest_accelerator {
-        type          = "nvidia-tesla-k80"
-        count         = 1
+        type  = "nvidia-tesla-k80"
+        count = 1
       }
 
       labels {
         role = "kubernetes"
         pool = "preemptible"
       }
+
       tags = ["role", "kubernetes"]
     }
   }
 }
-
 
 output "cluster_name" {
   value = "${google_container_cluster.primary.name}"
@@ -93,10 +95,13 @@ output "node_version" {
 #   value = "${google_container_cluster.primary.master_auth.0.client_certificate}"
 # }
 
+
 # output "client_key" {
 #   value = "${google_container_cluster.primary.master_auth.0.client_key}"
 # }
 
+
 # output "cluster_ca_certificate" {
 #   value = "${google_container_cluster.primary.master_auth.0.cluster_ca_certificate}"
 # }
+
