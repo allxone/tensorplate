@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    App: model
+  name: model
+  namespace: default
+  uid: 30f29a60-2ac4-11e8-9f1b-42010a80002d
+spec:
+  automountServiceAccountToken: false
+  containers:
+  - image: allxone/tensorplate:model-tfserving
+    imagePullPolicy: Always
+    name: model
+    ports:
+    - containerPort: 9000
+      protocol: TCP
+    resources:
+      limits:
+        nvidia.com/gpu: 1
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+  dnsPolicy: ClusterFirst
+  nodeSelector:
+    pool: preemptible
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300

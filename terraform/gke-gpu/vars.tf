@@ -17,7 +17,7 @@ variable "alwayson_node_count" {
 
 variable "preemptible_node_count" {
   description = "Preemptible pool Node count "
-  default     = "1"
+  default     = "0"
 }
 
 variable "kubernetes_password" {

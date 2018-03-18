@@ -62,14 +62,33 @@ resource "kubernetes_pod" "model" {
   }
 
   spec {
+    node_selector {
+      "cloud.google.com/gke-nodepool"    = "preemptible"
+      "cloud.google.com/gke-accelerator" = "nvidia-tesla-k80"
+    }
+
     container {
-      image             = "allxone/tensorplate:model-tfserving"
+      image             = "allxone/tensorplate:model-tfserving-broken"
       name              = "model"
       image_pull_policy = "Always"
 
       port {
         container_port = "${var.scoring_port}"
       }
+
+      # Unsupported:
+      #  https://github.com/terraform-providers/terraform-provider-kubernetes/issues/149
+      # Untaint workaround:
+      #  kubectl taint nodes gke-gke-gpu-pool-preemptible-76752dd8-fqbn nvidia.com/gpu:NoSchedule-
+      # Manual edit workaround:
+      #  manually modify pod yaml from gke web console to add the extended resource request
+      # Always run:
+      #  kubectl create -f https://raw.githubusercontent.com/GoogleCloudPlatform/container-engine-accelerators/k8s-1.9/nvidia-driver-installer/cos/daemonset-preloaded.yaml
+      # resources {
+      #   requests {
+      #     "nvidia/gpu" = "1"
+      #   }
+      # }
     }
   }
 }
