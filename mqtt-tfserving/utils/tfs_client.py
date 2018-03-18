@@ -48,7 +48,7 @@ class Client():
     request.model_spec.name = self.model
     request.model_spec.signature_name = 'serving_default'
     request.inputs['inputs'].CopyFrom(
-        tf.contrib.util.make_tensor_proto(image_np_expanded, shape=[1, image.size[0], images.size[1], 3]))
+        tf.contrib.util.make_tensor_proto(image_np_expanded, shape=[1, image.size[0], image.size[1], 3]))
     response = self.stub.Predict(request, self.timeout)
     json_data = parse_score_results(self, self.threshold, 
       tf.contrib.util.make_ndarray(response.outputs['detection_classes'])[0], 
