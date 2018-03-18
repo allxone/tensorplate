@@ -9,28 +9,37 @@ import sys
 if os.environ.get('MQTT_SERVER') is not None:
     mqtt_broker_address = os.environ['MQTT_SERVER']
 else:
-	mqtt_broker_address = "127.0.0.1"
+    mqtt_broker_address = "127.0.0.1"
 
 if os.environ.get('MQTT_SERVER_PORT') is not None:
     mqtt_broker_port = int(os.environ['MQTT_SERVER_PORT'])
 else:
-	mqtt_broker_port = 1883
+    mqtt_broker_port = 1883
 
 if os.environ.get('SCORING_ADDRESS') is not None:
     scoring_server_address = os.environ['SCORING_ADDRESS']
 else:
-	scoring_server_address = "127.0.0.1:9000"
+    scoring_server_address = "127.0.0.1:9000"
 
 if os.environ.get('MODEL_NAME') is not None:
     scoring_model = os.environ['MODEL_NAME']
 else:
-	scoring_model = "model"
+    scoring_model = "model"
 
 if os.environ.get('MODEL_VERSION') is not None:
-    scoring_model_version = os.environ['MODEL_VERSION']
+    scoring_model_version = int(os.environ['MODEL_VERSION'])
 else:
-	scoring_model_version = "1"
+    scoring_model_version = 1
 
+if os.environ.get('TFS_TIMEOUT') is not None:
+    tfs_timeout = int(os.environ['TFS_TIMEOUT'])
+else:
+    tfs_timeout = 60
+
+if os.environ.get('TFS_THRESHOLD') is not None:
+    tfs_threshold = int(os.environ['TFS_THRESHOLD'])
+else:
+    tfs_threshold = 0.5
 
 # Mosquitto callbacks
 def on_log(client, userdata, level, buf):
@@ -39,15 +48,13 @@ def on_log(client, userdata, level, buf):
 
 def on_message(client, userdata, message):
     try:
-        print("message topic=", message.topic)
-        print("message qos=", message.qos)
-        print("message retain flag=", message.retain)
+        print("message from topic=", message.topic)
 
         # Call the predict_service via gRPC
         response = tfs_client.predict(message.payload)
-        print("response=", response)
 
         # Return result
+        print("   response=", response)
         mqtt_client.publish("tensorplate/samantha/out", response)
 
     except:
@@ -64,7 +71,7 @@ mqtt_client.on_log = on_log
 mqtt_client.on_disconnect = on_disconnect
 
 # Instantiate Tensorflow Serving client
-tfs_client = tfs.Client(scoring_server_address, scoring_model, 1)     # Client(hostport, model, version, check_status)
+tfs_client = tfs.Client(scoring_server_address, scoring_model, scoring_model_version, tfs_timeout, tfs_threshold)
 
 # Start Mosquitto loop
 mqtt_client.connect(mqtt_broker_address, port=mqtt_broker_port)

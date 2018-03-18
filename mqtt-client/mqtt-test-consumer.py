@@ -2,7 +2,7 @@ import paho.mqtt.client as mqtt
 import json
 import sys
 
-mqtthost = "104.154.62.50"
+mqtthost = "35.184.164.51"
 mqttqueue = "tensorplate/samantha/out"
 tracked_object = 'car'
 threshold = 3

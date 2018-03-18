@@ -112,35 +112,48 @@ resource "kubernetes_service" "model" {
   }
 }
 
-# resource "kubernetes_pod" "mqtt-tfserving" {
-#   metadata {
-#     name = "mqtt-tfserving"
-#     labels {
-#       App = "mqtt-tfserving"
-#     }
-#   }
+resource "kubernetes_pod" "mqtt-tfserving" {
+  metadata {
+    name = "mqtt-tfserving"
 
-#   spec {
-#     container {
-#       image = "allxone/tensorplate:mqtt-tfserving"
-#       name  = "mqtt-tfserving"
-#       image_pull_policy = "Always"
+    labels {
+      App = "mqtt-tfserving"
+    }
+  }
 
-#       env {
-#         name = "SCORING_ADDRESS"
-#         value = "${kubernetes_service.model.load_balancer_ingress.0.ip}:${var.scoring_port}"
-#       }
-#       env {
-#         name = "MQTT_SERVER"
-#         value = "${kubernetes_service.mosquitto.load_balancer_ingress.0.ip}"
-#       }
-#       env {
-#         name = "MQTT_SERVER_PORT"
-#         value = "${var.mqtt_port}"
-#       }
-#     }
-#   }
-# }
+  spec {
+    container {
+      image             = "allxone/tensorplate:mqtt-tfserving"
+      name              = "mqtt-tfserving"
+      image_pull_policy = "Always"
+
+      env {
+        name  = "SCORING_ADDRESS"
+        value = "${kubernetes_service.model.load_balancer_ingress.0.ip}:${var.scoring_port}"
+      }
+
+      env {
+        name  = "MQTT_SERVER"
+        value = "${kubernetes_service.mosquitto.load_balancer_ingress.0.ip}"
+      }
+
+      env {
+        name  = "MQTT_SERVER_PORT"
+        value = "${var.mqtt_port}"
+      }
+
+      env {
+        name  = "TFS_TIMEOUT"
+        value = "${var.tfs_timeout}"
+      }
+
+      env {
+        name  = "TFS_THRESHOLD"
+        value = "${var.tfs_threshold}"
+      }
+    }
+  }
+}
 
 output "lb_ip" {
   value = "${kubernetes_service.mosquitto.load_balancer_ingress.0.ip}"

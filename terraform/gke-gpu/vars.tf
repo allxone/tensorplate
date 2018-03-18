@@ -34,6 +34,16 @@ variable "mqtt_port" {
   default     = "1883"
 }
 
+variable "tfs_timeout" {
+  description = "Tensorflow Serving Predict timeout"
+  default     = "60"
+}
+
+variable "tfs_threshold" {
+  description = "Tensorflow predicted class probability threshold"
+  default     = "0.5"
+}
+
 terraform {
   backend "s3" {
     bucket  = "s3-terraform-state.stedel.it"

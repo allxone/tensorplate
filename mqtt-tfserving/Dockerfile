@@ -1,4 +1,5 @@
 FROM python:2.7
+LABEL maintainer="allxone@hotmail.com"
 
 # Copy over and install the requirements
 COPY ./requirements.txt /requirements.txt
@@ -14,3 +15,6 @@ ENV MODEL_NAME model
 ENV MODEL_VERSION 1
 
 CMD [ "python", "/mqtt-tfserving.py" ]
+
+# EXAMPLE USAGE:
+# docker run --rm -e SCORING_ADDRESS=35.184.216.154:80 -e MQTT_SERVER=35.224.247.149 -it allxone/tensorplate:mqtt-tfserving /bin/bas

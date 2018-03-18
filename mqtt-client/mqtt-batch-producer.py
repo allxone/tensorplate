@@ -14,8 +14,8 @@ from time import sleep
 from time import gmtime, strftime
 
 
-inpath = "./files"
-mqtthost = "104.154.62.50"
+inpath = "../files"
+mqtthost = "35.184.164.51"
 mqttqueue = "tensorplate/samantha/in"
 
 #Read images
